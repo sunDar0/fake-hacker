@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hacker Terminal FX - Go Edition</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            background-color: #000000;
+            color: #00FF00;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9em; /* 텍스트가 길어져서 약간 줄임 */
+        }
+
+        #terminal {
+            padding: 15px; /* 패딩 약간 줄임 */
+            height: calc(100vh - 30px);
+            overflow-y: auto;
+            box-sizing: border-box;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .line-container {
+            margin-bottom: 2px;
+            /* display: flex; /* 프롬프트와 텍스트 정렬용 */
+        }
+
+        .prompt {
+            color: #00FF00;
+            /* margin-right: 8px; /* 프롬프트와 텍스트 사이 간격 */
+            /* flex-shrink: 0; /* 프롬프트 크기 고정 */
+        }
+        .text-content {
+            /* flex-grow: 1; /* 텍스트 내용이 남은 공간 차지 */
+        }
+
+
+        .cursor {
+            display: inline-block;
+            background-color: #00FF00;
+            width: 9px;
+            height: 1.1em;
+            animation: blink 1s step-end infinite;
+            margin-left: 4px;
+            vertical-align: bottom;
+        }
+
+        .cursor.typing {
+            animation: none;
+            background-color: #00FF00;
+        }
+
+        @keyframes blink {
+            from, to {
+                background-color: transparent;
+            }
+            50% {
+                background-color: #00FF00;
+            }
+        }
+
+        #terminal::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #terminal::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        #terminal::-webkit-scrollbar-thumb {
+            background: #00FF00;
+            border-radius: 4px;
+        }
+
+        #terminal::-webkit-scrollbar-thumb:hover {
+            background: #00AA00;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="terminal">
+        </div>
+
+    <script>
+        const terminal = document.getElementById('terminal');
+        let currentLineElement = null; // 현재 타이핑 중인 줄의 텍스트 부분을 담을 요소
+        let mainCursor = null; // 커서 요소
+
+        // --- 시나리오 정의 ---
+        // type: 'input' = 사용자 입력 (타이핑 효과), 'output' = 시스템 출력 (즉시 표시)
+        
+        let allScenarios = [];
+        let mockLines = [];
+
+        // 시나리오를 API에서 로드하는 함수
+        async function loadScenarios() {
+            try {
+                const response = await fetch('/api/scenario');
+                if (!response.ok) {
+                    throw new Error('시나리오 로드 실패');
+                }
+                const scenario = await response.json();
+                mockLines = scenario;
+                console.log('시나리오를 로드했습니다.');
+                // 시나리오 로드 완료 후 타이핑 시작
+                typeLine();
+            } catch (error) {
+                console.error('시나리오 로드 실패:', error);
+                // 기본 메시지 표시
+                setupNewLine('output');
+                currentLineElement.innerHTML = '시나리오를 로드할 수 없습니다.';
+            }
+        }
+
+        let currentLineIndex = 0;
+        let currentCharIndex = 0;
+        const typingSpeedMin = 15; // 최소 타이핑 속도 (밀리초)
+        const typingSpeedMax = 80; // 최대 타이핑 속도 (밀리초)
+        const inputToOutputDelay = 300;  // input 완료 후 output 시작까지 딜레이 (시스템 처리 시간)
+        const outputToInputDelay = 800;  // output 완료 후 다음 input 시작까지 딜레이 (사용자 생각 시간)
+        const outputToOutputDelay = 100; // output 간 딜레이
+
+        // 무작위 타이핑 속도 생성 함수
+        function getRandomTypingSpeed() {
+            return Math.floor(Math.random() * (typingSpeedMax - typingSpeedMin + 1)) + typingSpeedMin;
+        }
+
+        function setupNewLine(lineType) {
+            const lineContainer = document.createElement('div');
+            lineContainer.classList.add('line-container');
+
+            const promptSpan = document.createElement('span');
+            promptSpan.classList.add('prompt');
+            // input 타입일 때는 $, output 타입일 때는 프롬프트 없음
+            promptSpan.textContent = lineType === 'input' ? '$ ' : '';
+            lineContainer.appendChild(promptSpan);
+
+            currentLineElement = document.createElement('span');
+            currentLineElement.classList.add('text-content');
+            lineContainer.appendChild(currentLineElement);
+
+            // 기존 커서가 있다면 제거
+            if (mainCursor && mainCursor.parentNode) {
+                mainCursor.parentNode.removeChild(mainCursor);
+            }
+
+            // 새 커서를 현재 줄에 추가
+            mainCursor = document.createElement('span');
+            mainCursor.classList.add('cursor');
+            lineContainer.appendChild(mainCursor);
+
+            terminal.appendChild(lineContainer);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+
+        function typeLine() {
+            if (currentLineIndex >= mockLines.length) {
+                // 모든 줄 표시 완료 - 커서 깜빡임 시작
+                if (mainCursor) {
+                    mainCursor.classList.remove('typing');
+                }
+                return;
+            }
+
+            const currentLine = mockLines[currentLineIndex];
+
+            if (currentCharIndex === 0) { // 새 줄 시작
+                setupNewLine(currentLine.type);
+                
+                if (currentLine.type === 'output') {
+                    // 시스템 출력은 즉시 표시
+                    currentLineElement.innerHTML = currentLine.text;
+                    currentLineIndex++;
+                    terminal.scrollTop = terminal.scrollHeight;
+                    
+                    // 다음 줄의 타입에 따라 딜레이 결정
+                    let nextDelay;
+                    if (currentLineIndex < mockLines.length) {
+                        const nextLineType = mockLines[currentLineIndex].type;
+                        if (nextLineType === 'input') {
+                            // output 완료 후 input 시작: 사용자 생각 시간
+                            nextDelay = outputToInputDelay;
+                        } else {
+                            // output 간 딜레이
+                            nextDelay = outputToOutputDelay;
+                        }
+                    } else {
+                        nextDelay = 0;
+                    }
+                    
+                    setTimeout(typeLine, nextDelay);
+                    return;
+                } else {
+                    // 사용자 입력은 타이핑 효과
+                    if (mainCursor) {
+                        mainCursor.classList.add('typing');
+                    }
+                }
+            }
+
+            // 사용자 입력 타이핑 처리
+            if (currentLine.type === 'input' && currentCharIndex < currentLine.text.length) {
+                currentLineElement.innerHTML += currentLine.text[currentCharIndex];
+                currentCharIndex++;
+                terminal.scrollTop = terminal.scrollHeight;
+                setTimeout(typeLine, getRandomTypingSpeed());
+            } else {
+                // 현재 줄 타이핑 완료
+                if (mainCursor) {
+                    mainCursor.classList.remove('typing');
+                }
+                currentLineIndex++;
+                currentCharIndex = 0;
+                terminal.scrollTop = terminal.scrollHeight;
+                
+                // 다음 줄의 타입에 따라 딜레이 결정
+                let nextDelay;
+                if (currentLineIndex < mockLines.length) {
+                    const currentLineType = mockLines[currentLineIndex - 1].type;
+                    const nextLineType = mockLines[currentLineIndex].type;
+                    
+                    if (currentLineType === 'input' && nextLineType === 'output') {
+                        // input 완료 후 output 시작: 시스템 처리 시간
+                        nextDelay = inputToOutputDelay;
+                    } else if (currentLineType === 'output' && nextLineType === 'input') {
+                        // output 완료 후 input 시작: 사용자 생각 시간
+                        nextDelay = outputToInputDelay;
+                    } else {
+                        // output 간 딜레이
+                        nextDelay = outputToOutputDelay;
+                    }
+                } else {
+                    nextDelay = 0;
+                }
+                
+                setTimeout(typeLine, nextDelay);
+            }
+        }
+
+        // 초기 실행 - 시나리오를 API에서 로드
+        loadScenarios();
+
+    </script>
+
+</body>
+</html>
