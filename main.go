@@ -1,19 +1,24 @@
 package main
 
 import (
+	"context"
 	"embed"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"html/template"
 	"io/fs"
-	"log"
-	"math/rand"
+	"log/slog"
+	"math/rand/v2"
 	"net"
 	"net/http"
+	"os"
 	"os/exec"
+	"os/signal"
 	"runtime"
 	"strconv"
 	"strings"
+	"syscall"
 	"time"
 )
 
@@ -33,7 +38,12 @@ type Scenario []ScenarioLine
 var scenarios []Scenario
 
 func init() {
-	rand.Seed(time.Now().UnixNano())
+	// 구조화된 로깅 설정
+	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+		Level: slog.LevelInfo,
+	}))
+	slog.SetDefault(logger)
+	
 	loadScenarios()
 }
 
@@ -41,10 +51,11 @@ func loadScenarios() {
 	// 내장된 시나리오 파일들 읽기
 	entries, err := fs.ReadDir(scenarioFiles, "scenarios")
 	if err != nil {
-		log.Printf("시나리오 디렉토리 읽기 오류: %v", err)
+		slog.Error("시나리오 디렉토리 읽기 오류", "error", err)
 		return
 	}
 
+	var loadErrors []error
 	for _, entry := range entries {
 		if !strings.HasSuffix(entry.Name(), ".json") {
 			continue
@@ -53,32 +64,39 @@ func loadScenarios() {
 		filePath := "scenarios/" + entry.Name()
 		data, err := scenarioFiles.ReadFile(filePath)
 		if err != nil {
-			log.Printf("파일 읽기 오류 %s: %v", filePath, err)
+			loadErrors = append(loadErrors, fmt.Errorf("파일 읽기 오류 %s: %w", filePath, err))
 			continue
 		}
 
 		var scenario Scenario
 		if err := json.Unmarshal(data, &scenario); err != nil {
-			log.Printf("JSON 파싱 오류 %s: %v", filePath, err)
+			loadErrors = append(loadErrors, fmt.Errorf("JSON 파싱 오류 %s: %w", filePath, err))
 			continue
 		}
 
 		scenarios = append(scenarios, scenario)
 	}
 
-	log.Printf("%d개의 시나리오를 로드했습니다.", len(scenarios))
+	if len(loadErrors) > 0 {
+		slog.Warn("일부 시나리오 로드 실패", "errors", errors.Join(loadErrors...))
+	}
+
+	slog.Info("시나리오 로드 완료", "count", len(scenarios))
 }
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	// 내장된 HTML 내용을 템플릿으로 파싱
 	t, err := template.New("index").Parse(htmlContent)
 	if err != nil {
+		slog.Error("템플릿 파싱 오류", "error", err)
 		http.Error(w, "템플릿 파싱 오류: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	t.Execute(w, nil)
+	if err := t.Execute(w, nil); err != nil {
+		slog.Error("템플릿 실행 오류", "error", err)
+	}
 }
 
 func scenarioHandler(w http.ResponseWriter, r *http.Request) {
@@ -87,23 +105,27 @@ func scenarioHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 랜덤 시나리오 선택
-	randomIndex := rand.Intn(len(scenarios))
+	// 랜덤 시나리오 선택 (math/rand/v2 사용)
+	randomIndex := rand.IntN(len(scenarios))
 	selectedScenario := scenarios[randomIndex]
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(selectedScenario)
+	if err := json.NewEncoder(w).Encode(selectedScenario); err != nil {
+		slog.Error("JSON 인코딩 오류", "error", err)
+	}
 }
 
 func scenarioListHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	
-	response := map[string]interface{}{
+	response := map[string]any{
 		"count":     len(scenarios),
 		"scenarios": scenarios,
 	}
 	
-	json.NewEncoder(w).Encode(response)
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		slog.Error("JSON 인코딩 오류", "error", err)
+	}
 }
 
 func specificScenarioHandler(w http.ResponseWriter, r *http.Request) {
@@ -121,17 +143,20 @@ func specificScenarioHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(scenarios[index-1])
+	if err := json.NewEncoder(w).Encode(scenarios[index-1]); err != nil {
+		slog.Error("JSON 인코딩 오류", "error", err)
+	}
 }
 
 // 사용 가능한 포트를 찾는 함수
 func findAvailablePort(startPort int) int {
-	for port := startPort; port <= startPort+100; port++ {
-		addr := fmt.Sprintf(":%d", port)
+	for i := 0; i < 100; i++ {
+		currentPort := startPort + i
+		addr := fmt.Sprintf(":%d", currentPort)
 		listener, err := net.Listen("tcp", addr)
 		if err == nil {
 			listener.Close()
-			return port
+			return currentPort
 		}
 	}
 	return startPort // 기본값 반환
@@ -142,7 +167,9 @@ func minimizeWindow() {
 	switch runtime.GOOS {
 	case "windows":
 		// Windows에서 현재 콘솔 창 최소화
-		exec.Command("powershell", "-Command", "Add-Type -TypeDefinition 'using System; using System.Runtime.InteropServices; public class Win32 { [DllImport(\"user32.dll\")] public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow); [DllImport(\"kernel32.dll\")] public static extern IntPtr GetConsoleWindow(); }'; $consolePtr = [Win32]::GetConsoleWindow(); [Win32]::ShowWindow($consolePtr, 2)").Start()
+		if err := exec.Command("powershell", "-Command", "Add-Type -TypeDefinition 'using System; using System.Runtime.InteropServices; public class Win32 { [DllImport(\"user32.dll\")] public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow); [DllImport(\"kernel32.dll\")] public static extern IntPtr GetConsoleWindow(); }'; $consolePtr = [Win32]::GetConsoleWindow(); [Win32]::ShowWindow($consolePtr, 2)").Start(); err != nil {
+			slog.Debug("창 최소화 실패", "platform", "windows", "error", err)
+		}
 	case "darwin":
 		// macOS에서 터미널 앱을 최소화 (여러 터미널 앱 지원)
 		// 먼저 Terminal 앱 시도
@@ -152,12 +179,16 @@ func minimizeWindow() {
 			err = exec.Command("osascript", "-e", "tell application \"iTerm2\" to tell current window to set miniaturized to true").Run()
 			if err != nil {
 				// 둘 다 안 되면 현재 활성 창 최소화
-				exec.Command("osascript", "-e", "tell application \"System Events\" to tell process (name of first process whose frontmost is true) to set value of attribute \"AXMinimized\" of front window to true").Start()
+				if err := exec.Command("osascript", "-e", "tell application \"System Events\" to tell process (name of first process whose frontmost is true) to set value of attribute \"AXMinimized\" of front window to true").Start(); err != nil {
+					slog.Debug("창 최소화 실패", "platform", "darwin", "error", err)
+				}
 			}
 		}
 	case "linux":
 		// Linux에서는 wmctrl 사용 (설치되어 있다면)
-		exec.Command("wmctrl", "-r", ":ACTIVE:", "-b", "add,hidden").Start()
+		if err := exec.Command("wmctrl", "-r", ":ACTIVE:", "-b", "add,hidden").Start(); err != nil {
+			slog.Debug("창 최소화 실패", "platform", "linux", "error", err)
+		}
 	}
 }
 
@@ -177,21 +208,22 @@ func openBrowser(url string) {
 	}
 
 	if err != nil {
-		log.Printf("브라우저 열기 실패: %v", err)
+		slog.Error("브라우저 열기 실패", "error", err, "url", url)
 		fmt.Printf("수동으로 브라우저에서 %s 를 열어주세요\n", url)
 	}
 }
 
 func main() {
-	// 라우트 설정
-	http.HandleFunc("/", homeHandler)
-	http.HandleFunc("/api/scenario", scenarioHandler)
-	http.HandleFunc("/api/scenarios", scenarioListHandler)
-	http.HandleFunc("/api/scenario/", specificScenarioHandler)
+	// HTTP 라우터 설정 (ServeMux 사용)
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", homeHandler)
+	mux.HandleFunc("/api/scenario", scenarioHandler)
+	mux.HandleFunc("/api/scenarios", scenarioListHandler)
+	mux.HandleFunc("/api/scenario/", specificScenarioHandler)
 
 	// 사용 가능한 포트 찾기
 	availablePort := findAvailablePort(8080)
-	port := fmt.Sprintf(":%d", availablePort)
+	addr := fmt.Sprintf(":%d", availablePort)
 	url := fmt.Sprintf("http://localhost:%d", availablePort)
 	
 	fmt.Printf("🚀 Fake Hacker Terminal을 시작합니다...\n")
@@ -200,10 +232,29 @@ func main() {
 	fmt.Printf("🔗 브라우저를 자동으로 열고 있습니다...\n")
 	fmt.Printf("⚡ 종료하려면 Ctrl+C를 누르세요\n\n")
 
+	// HTTP 서버 설정
+	server := &http.Server{
+		Addr:    addr,
+		Handler: mux,
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		IdleTimeout:  60 * time.Second,
+	}
+
+	// 컨텍스트와 시그널 처리
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	// 시그널 처리를 위한 채널
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+
 	// 서버를 고루틴으로 시작
 	go func() {
-		if err := http.ListenAndServe(port, nil); err != nil {
-			log.Printf("서버 시작 실패: %v", err)
+		slog.Info("서버 시작", "address", addr)
+		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			slog.Error("서버 시작 실패", "error", err)
+			cancel()
 		}
 	}()
 
@@ -215,6 +266,21 @@ func main() {
 	time.Sleep(500 * time.Millisecond)
 	minimizeWindow()
 
-	// 메인 고루틴이 종료되지 않도록 대기
-	select {}
+	// 시그널 대기
+	select {
+	case <-sigChan:
+		slog.Info("종료 시그널 수신, 서버를 종료합니다...")
+	case <-ctx.Done():
+		slog.Info("컨텍스트 취소됨, 서버를 종료합니다...")
+	}
+
+	// 서버 graceful shutdown
+	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer shutdownCancel()
+
+	if err := server.Shutdown(shutdownCtx); err != nil {
+		slog.Error("서버 종료 실패", "error", err)
+	} else {
+		slog.Info("서버가 정상적으로 종료되었습니다")
+	}
 } 
