@@ -208,11 +208,11 @@ func main() {
 	}()
 
 	// 잠시 대기 후 브라우저 열기
-	time.Sleep(500 * time.Millisecond)
+	time.Sleep(100 * time.Millisecond)
 	openBrowser(url)
 	
 	// 브라우저가 열린 후 창 최소화
-	time.Sleep(1500 * time.Millisecond)
+	time.Sleep(500 * time.Millisecond)
 	minimizeWindow()
 
 	// 메인 고루틴이 종료되지 않도록 대기

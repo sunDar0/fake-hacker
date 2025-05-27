@@ -80,9 +80,24 @@
         #terminal::-webkit-scrollbar-thumb:hover {
             background: #00AA00;
         }
+
+        .watermark {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            font-size: 5em;
+            font-weight: bold;
+            color: rgba(255, 0, 0, 0.3);
+            font-family: 'Courier New', Courier, monospace;
+            z-index: 1000;
+            pointer-events: none;
+            user-select: none;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
     </style>
 </head>
 <body>
+    <div class="watermark">FAKE</div>
 
     <div id="terminal">
         </div>
